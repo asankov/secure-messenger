@@ -129,22 +129,34 @@ func (l *Listener) handlePublicKeyExchange(w http.ResponseWriter, r *http.Reques
 func (l *Listener) handleSecretKeyExchange(w http.ResponseWriter, r *http.Request) {
 	var request secretKeyExchange
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		panic(err)
+		l.logger.Error("error while decoding request", "error", err)
+		w.WriteHeader(http.StatusBadRequest)
+
+		return
 	}
 
 	sharedSecret, err := l.store.Get(sharedSecretStoreKey)
 	if err != nil {
-		panic(err)
+		l.logger.Error("error while getting shared secret from the keychain", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+
+		return
 	}
 
 	encryptor, err := crypto.NewEncryptor(sharedSecret)
 	if err != nil {
-		panic(err)
+		l.logger.Error("error while creating encryptor", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+
+		return
 	}
 
 	secretKey, err := encryptor.Decrypt(request.EncryptedSecretKey)
 	if err != nil {
-		panic(err)
+		l.logger.Error("error while creating decrypting encrypted security key", "error", err)
+		w.WriteHeader(http.StatusBadRequest)
+
+		return
 	}
 
 	l.logger.Info("Retrieved secret key")
@@ -152,6 +164,8 @@ func (l *Listener) handleSecretKeyExchange(w http.ResponseWriter, r *http.Reques
 	location, err := l.store.StoreSecretKey(secretKey)
 	if err != nil {
 		l.logger.Error("error while storing secret key", "error", err)
+		l.logger.Info("outputing the key here so that is does not get list")
+		l.logger.Info(secretKey)
 	} else {
 		l.logger.Info("Secret key stored", "location", location)
 	}
