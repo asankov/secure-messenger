@@ -30,7 +30,7 @@ h/LVOSopnqb/e2maMxAjIQ==
 
 You need to share this key with the person you want to exchange messages with.
 
-TODO: define secure way to share the key.
+For more info on how to share the key securely, go to [Key Exchange](#key-exchange).
 
 ### encrypt
 
@@ -79,3 +79,39 @@ TODO: passing long encrypted message as a CLI arguments is not a good UX.
 Support a better way like reading the messages from file or from stdin.
 
 Voila. You have exchange an encrypted message.
+
+## Key Exchange
+
+In order to securely exchange the secret key with the other party, you can again use the CLI.
+
+The two command to do that are `exchange-key` and `exchange-key-server`.
+
+The other side (let's call them Bob, and we are Alice) need to run the `exchange-key-server` command.
+This will start a web server that will listen for a request that will start the key exchange process.
+
+```shell
+(bob)$ secure-messenger exchange-key-server
+Starting exchange key server on [:8080]
+```
+
+Then we (Alice) can use the `exchange-key` command to send a request to Bob's server that will initiate the key-exchange process.
+
+```shell
+(alice)$ secure-messenger exchange-key --remote-addr=http://localhost:8080 --secret-key-file=key.file
+successfully exchanged secret key
+```
+
+Meanwhile Bob sees this:
+
+```shell
+(bob)$ secure-messenger exchange-key-server
+Starting exchange key server on [:8080]
+time=2023-11-18T18:28:09.647+02:00 level=INFO msg="Retrieved secret key"
+time=2023-11-18T18:28:09.648+02:00 level=INFO msg="Secret key stored" location=keychain
+```
+
+This means that the key-exchange was successful and now Bob has the secret key stored in its keychain.
+
+These command use the Diffie-Helmman algorithm for secure exchanging secret data over an untrusted network.
+
+After this is completed, both Alice and Bob have the secret key and can start exchange messages.

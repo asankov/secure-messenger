@@ -17,15 +17,21 @@ import (
 
 const (
 	sharedSecretStoreKey = "shared-secret"
+	secretKeyStoreKey    = "secret-key"
 )
+
+type Store interface {
+	Store(key, value string) (string, error)
+	Get(key string) (string, error)
+}
 
 type Listener struct {
 	logger *slog.Logger
-	store  *secretstore.LocalStore
+	store  Store
 }
 
 func NewListener() (*Listener, error) {
-	store, err := secretstore.NewLocalStore()
+	store, err := secretstore.NewKeychainStore()
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +95,7 @@ func (l *Listener) handlePublicKeyExchange(w http.ResponseWriter, r *http.Reques
 	x, _ := publicKeyOtherSideECDSA.Curve.ScalarMult(publicKeyOtherSideECDSA.X, publicKeyOtherSideECDSA.Y, privateKey.D.Bytes())
 	sharedSecret := sha256.Sum256(x.Bytes())
 
-	if err := l.store.Store(sharedSecretStoreKey, string(sharedSecret[:])); err != nil {
+	if _, err := l.store.Store(sharedSecretStoreKey, string(sharedSecret[:])); err != nil {
 		l.logger.Error("error while storing shared secret", "error", err)
 		w.WriteHeader(http.StatusInternalServerError)
 
@@ -147,7 +153,13 @@ func (l *Listener) handleSecretKeyExchange(w http.ResponseWriter, r *http.Reques
 	}
 
 	l.logger.Info("Retrieved secret key")
-	l.logger.Info(secretKey)
+
+	location, err := l.store.Store(secretKeyStoreKey, secretKey)
+	if err != nil {
+		l.logger.Error("error while storing secret key", "error", err)
+	} else {
+		l.logger.Info("Secret key stored", "location", location)
+	}
 
 	w.WriteHeader(http.StatusOK)
 }

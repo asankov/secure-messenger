@@ -17,8 +17,14 @@ func NewLocalStore() (*LocalStore, error) {
 	return &LocalStore{}, nil
 }
 
-func (s *LocalStore) Store(key, value string) error {
-	return os.WriteFile("~/.secure-messenger/secret-"+key, []byte(value), 0600)
+func (s *LocalStore) Store(key, value string) (string, error) {
+	filename := "~/.secure-messenger/secret-" + key
+	err := os.WriteFile(filename, []byte(value), 0600)
+	if err != nil {
+		return "", err
+	}
+	return filename, nil
+
 }
 
 func (s *LocalStore) Get(key string) (string, error) {
