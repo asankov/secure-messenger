@@ -70,7 +70,6 @@ func (e *Exchanger) ExchangeSecretKey(privateKey *ecdsa.PrivateKey, secretKey st
 	sharedSecret := sha256.Sum256(x.Bytes())
 
 	// encrypt the value with the shared key
-	// TODO implement encrypt
 	encryptor, err := crypto.NewEncryptor(string(sharedSecret[:]))
 	if err != nil {
 		return fmt.Errorf("error while creating encryptor: %w", err)
