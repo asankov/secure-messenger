@@ -65,3 +65,11 @@ func ParseFromJSON(s string) (*Message, error) {
 
 	return &m, nil
 }
+
+func (m *Message) ToJSON() (string, error) {
+	jsonBytes, err := json.Marshal(m)
+	if err != nil {
+		return "", fmt.Errorf("error while marshalling message: %w", err)
+	}
+	return string(jsonBytes), nil
+}

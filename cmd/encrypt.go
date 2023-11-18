@@ -4,9 +4,14 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/asankov/secure-messenger/internal/crypto"
+	"github.com/asankov/secure-messenger/internal/messages"
 	"github.com/spf13/cobra"
+)
+
+var (
+	receiverID string
+	payload    string
 )
 
 // encryptCmd represents the encrypt command
@@ -20,7 +25,34 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("encrypt called")
+		outErr := cmd.OutOrStderr()
+		out := cmd.OutOrStdout()
+
+		msg, err := messages.NewMessage(senderID, receiverID, payload)
+		if err != nil {
+			_, _ = outErr.Write([]byte(err.Error()))
+		}
+
+		key, err := getKey()
+		if err != nil {
+			_, _ = outErr.Write([]byte(err.Error()))
+		}
+		encryptor, err := crypto.NewEncryptor(key)
+		if err != nil {
+			_, _ = outErr.Write([]byte(err.Error()))
+		}
+
+		json, err := msg.ToJSON()
+		if err != nil {
+			_, _ = outErr.Write([]byte(err.Error()))
+		}
+
+		enc, err := encryptor.Encrypt(json)
+		if err != nil {
+			_, _ = outErr.Write([]byte(err.Error()))
+		}
+
+		_, _ = out.Write([]byte(enc))
 	},
 }
 
@@ -35,5 +67,6 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// encryptCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	encryptCmd.Flags().StringVar(&receiverID, "receiver-id", "", "the ID of the person receiving the message")
+	encryptCmd.Flags().StringVar(&payload, "payload", "", "the payload to be encrypted")
 }

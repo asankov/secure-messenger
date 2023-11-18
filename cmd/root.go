@@ -7,8 +7,10 @@ import (
 )
 
 var (
-	cfgFile  string
-	senderID string
+	cfgFile       string
+	senderID      string
+	secretKey     string
+	secretKeyFile string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -27,6 +29,8 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringVar(&cfgFile, "config-file", "~/.config/secure-messenger/config.yaml", "file from which to read the config values")
-	rootCmd.Flags().StringVar(&senderID, "sender-id", "", "your Sender ID")
+	// rootCmd.Flags().StringVar(&cfgFile, "config-file", "~/.config/secure-messenger/config.yaml", "file from which to read the config values")
+	rootCmd.PersistentFlags().StringVar(&senderID, "sender-id", "", "your Sender ID")
+	rootCmd.PersistentFlags().StringVar(&secretKey, "secret-key", "", "the encryption key")
+	rootCmd.PersistentFlags().StringVar(&secretKeyFile, "secret-key-file", "", "the file that contains the encryption key")
 }
