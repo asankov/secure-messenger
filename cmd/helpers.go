@@ -26,3 +26,7 @@ func getKey() (string, error) {
 
 	return "", fmt.Errorf(`either "secret-key" or "secret-key-file" must be specified`)
 }
+
+func write(out io.Writer, msg string) {
+	_, _ = out.Write([]byte(msg + "\n"))
+}
