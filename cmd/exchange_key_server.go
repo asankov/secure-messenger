@@ -19,13 +19,10 @@ var (
 // exchangeKeyCmd represents the exchangeKey command
 var exchangeKeyServerCmd = &cobra.Command{
 	Use:   "exchange-key-server",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "exchange-key-server starts a server that exchanges the secret key with the remote server",
+	Long: `This command starts a webserver that uses a secure algorithm to exchange the secret key with the remote server over an insecure channel.
+	
+After the process is completed it will save the secret key in the configured location or output it to the console.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		stdOut := cmd.OutOrStdout()
 		stdErr := cmd.ErrOrStderr()

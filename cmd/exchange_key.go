@@ -17,13 +17,8 @@ var (
 // exchangeKeyCmd represents the exchangeKey command
 var exchangeKeyCmd = &cobra.Command{
 	Use:   "exchange-key",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "exchange-key exchanges the secret key with the remote server",
+	Long:  `This command uses a secure algorithm to exchange the secret key with the remote server over an insecure channel.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		stdOut := cmd.OutOrStdout()
 		stdErr := cmd.ErrOrStderr()
@@ -34,7 +29,7 @@ to quickly create a Cobra application.`,
 			os.Exit(1)
 		}
 
-		secretKey, err := getKey()
+		secretKey, err := getKey(stdErr)
 		if err != nil {
 			write(stdErr, err.Error())
 			os.Exit(1)
@@ -48,12 +43,6 @@ to quickly create a Cobra application.`,
 
 		write(stdOut, "successfully exchanged secret key")
 	},
-}
-
-func encrypt(key []byte, value []byte) ([]byte, error) {
-	// implement the function
-
-	return nil, nil
 }
 
 func init() {

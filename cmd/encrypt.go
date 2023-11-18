@@ -22,9 +22,7 @@ var encryptCmd = &cobra.Command{
 	Short: "encrypt generate an encrypted message",
 	Long: `encrypt generate a JSON message that has sender id, receiver id, payload and a timestamp and encrypts the message with the secret key.
 
-"sender-id", "receiver-id" and "payload" are required flags.
-Either one of "secret-key" or "secret-key-file" is also required.
-	`,
+"sender-id", "receiver-id" and "payload" are required flags.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		stdOut := cmd.OutOrStdout()
 		stdErr := cmd.OutOrStderr()
@@ -35,7 +33,7 @@ Either one of "secret-key" or "secret-key-file" is also required.
 			os.Exit(1)
 		}
 
-		key, err := getKey()
+		key, err := getKey(stdErr)
 		if err != nil {
 			write(stdErr, err.Error())
 			os.Exit(1)
@@ -65,14 +63,6 @@ Either one of "secret-key" or "secret-key-file" is also required.
 func init() {
 	rootCmd.AddCommand(encryptCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// encryptCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
 	encryptCmd.Flags().StringVar(&senderID, "sender-id", "", "your Sender ID")
 	encryptCmd.Flags().StringVar(&receiverID, "receiver-id", "", "the ID of the person receiving the message")
 	encryptCmd.Flags().StringVar(&payload, "payload", "", "the payload to be encrypted")

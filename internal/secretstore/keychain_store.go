@@ -11,12 +11,22 @@ const (
 	accessGroup = "org.secure-messenger"
 
 	location = "keychain"
+
+	secretKeyKey = "secret-key"
 )
 
 type KeychainStore struct{}
 
 func NewKeychainStore() (*KeychainStore, error) {
 	return &KeychainStore{}, nil
+}
+
+func (s *KeychainStore) StoreSecretKey(key string) (string, error) {
+	return s.Store(secretKeyKey, key)
+}
+
+func (s *KeychainStore) GetSecretKey() (string, error) {
+	return s.Get(secretKeyKey)
 }
 
 func (s *KeychainStore) Store(key, value string) (string, error) {

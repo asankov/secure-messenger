@@ -13,13 +13,10 @@ import (
 // exchangeKeyCmd represents the exchangeKey command
 var retrieveKeyCmd = &cobra.Command{
 	Use:   "retrieve-key",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "retrieve-key retrieves the key from the keychain",
+	Long: `Use this command to retrieve the key from the keychain.
+	
+Only use this command if necessary and be careful what you do with the key after you retrieve it.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		stdOut := cmd.OutOrStdout()
 		stdErr := cmd.ErrOrStderr()

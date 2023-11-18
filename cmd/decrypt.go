@@ -22,7 +22,7 @@ It will output the encrypted message in its JSON format on the standart output.`
 		stdErr := cmd.OutOrStderr()
 		stdOut := cmd.OutOrStdout()
 
-		key, err := getKey()
+		key, err := getKey(stdErr)
 		if err != nil {
 			write(stdErr, err.Error())
 			os.Exit(1)

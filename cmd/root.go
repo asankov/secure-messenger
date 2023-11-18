@@ -29,7 +29,6 @@ func Execute() {
 }
 
 func init() {
-	// rootCmd.Flags().StringVar(&cfgFile, "config-file", "~/.config/secure-messenger/config.yaml", "file from which to read the config values")
-	rootCmd.PersistentFlags().StringVar(&secretKey, "secret-key", "", "the encryption key")
-	rootCmd.PersistentFlags().StringVar(&secretKeyFile, "secret-key-file", "", "the file that contains the encryption key")
+	rootCmd.PersistentFlags().StringVar(&secretKey, "secret-key", "", "the encryption key. If unset the key will be read from the keychain. It is preferable to use the keychain for security reasons.")
+	rootCmd.PersistentFlags().StringVar(&secretKeyFile, "secret-key-file", "", "the file that contains the encryption key. If unset the key will be read from the keychain. It is preferable to use the keychain for security reasons.")
 }

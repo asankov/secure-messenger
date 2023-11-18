@@ -20,14 +20,9 @@ const (
 	secretKeyStoreKey    = "secret-key"
 )
 
-type Store interface {
-	Store(key, value string) (string, error)
-	Get(key string) (string, error)
-}
-
 type Listener struct {
 	logger *slog.Logger
-	store  Store
+	store  *secretstore.KeychainStore
 }
 
 func NewListener() (*Listener, error) {
@@ -154,7 +149,7 @@ func (l *Listener) handleSecretKeyExchange(w http.ResponseWriter, r *http.Reques
 
 	l.logger.Info("Retrieved secret key")
 
-	location, err := l.store.Store(secretKeyStoreKey, secretKey)
+	location, err := l.store.StoreSecretKey(secretKey)
 	if err != nil {
 		l.logger.Error("error while storing secret key", "error", err)
 	} else {
