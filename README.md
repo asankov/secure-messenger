@@ -109,7 +109,7 @@ Support a better way like reading the messages from file or from stdin.
 
 Voila. You have exchange an encrypted message.
 
-## Key Exchange
+### Key Exchange
 
 In order to securely exchange the secret key with the other party, you can again use the CLI.
 
@@ -144,3 +144,58 @@ This means that the key-exchange was successful and now Bob has the secret key s
 These command use the [Diffie-Helmman algorithm](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange) for secure exchanging secret data over an untrusted network.
 
 After this is completed, both Alice and Bob have the secret key and can start exchange messages.
+
+## Design decision
+
+### App structure
+
+#### CLI
+
+I have created this program as a [Cobra](https://github.com/spf13/cobra) CLI app.
+I decided to use Cobra, because it is the de-facto standard for building Go CLI apps, I have used it in my work, so am familiar with it, and it has everything I needed for the task.
+
+Most of the command are simple one-off tasks that run, do something and then exit.
+
+The only exception is the `exchange-key-server` command that starts a web-server and listens for requests.
+The command does not exit, unless explicitly stopped by the user.
+
+I used the [cobra-cli generator](https://github.com/spf13/cobra-cli/blob/main/README.md) to generate the boilerplate for the commands.
+All the commands are in the [`cmd`](./cmd) directory.
+
+#### Internal
+
+The other source folder I have is the [`internal`](./internal/) one.
+
+In Go, the `internal` package is special as it does not allow an external project to import this code.
+I this this, because I don't think that this code should be imported by another project, so I don't want to have it public
+and to have to deal with API backwards-compatibility guarantees.
+
+The packages inside the `internal` folder are:
+
+- `crypto` - deals with all the crypthography.
+In `crypto/exchange/listener.go` there is a bit of code that deals with HTTP stuff, which maybe is not the best place for it, but I'll let it roll for now and refactor it later.
+- `messages` - domain model for the messages that are being exchanged
+- `secretstore` - package for the different types of stores used to store the keys
+
+Most of the code in `internal` is covered by unit tests.
+
+
+### Crypthography
+
+#### Message encryption
+
+For the message encryption I used [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard).
+This type of encryption is considered secure and used widely in the industry.
+
+For the mode of operation I chose [Galois/Counter Mode (GCM)](https://en.wikipedia.org/wiki/Galois/Counter_Mode).
+It is supported out-of-the-box by the Go stdlib, it is fast, and it provides both authenticity and confidentiality.
+
+#### Storing the keys
+
+By default, all CLI commands use the OS keychain for storing and reading the secret key.
+
+This is the most secure option, because the OS keychain (depending on the OS) can support native encryption and access control.
+
+If needed, the command also support storing(and reading) the key from a file or from a CLI argument.
+This is not recommended, because files can be read by anyone and CLI arguments are visible in the shell history.
+The command output warnings when these options are used.
