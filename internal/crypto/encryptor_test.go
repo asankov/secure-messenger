@@ -45,6 +45,8 @@ func TestEncryptor(t *testing.T) {
 			require.NoError(t, err)
 
 			require.Equal(t, msg, decrypted)
+			// test that the unit tests in GH actions will fail
+			require.Equal(t, 0, 1)
 		})
 	}
 
