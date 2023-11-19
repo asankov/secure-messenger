@@ -199,3 +199,35 @@ This is the most secure option, because the OS keychain (depending on the OS) ca
 If needed, the command also support storing(and reading) the key from a file or from a CLI argument.
 This is not recommended, because files can be read by anyone and CLI arguments are visible in the shell history.
 The command output warnings when these options are used.
+
+### Building and running the code locally
+
+To build the code locally, you need to have the Go toolchain installed on your machine.
+The version of Go we are using is 1.21.
+
+To build the code:
+
+```console
+go build -o secure-messenger main.go
+```
+
+This wil build the secure-messenger CLI binary for your OS.
+You can now use it:
+
+```console
+$ ./secure-messenger generate-key --output-to-stdout
+Consider using the keychain to store the key, so that it don't get lost or exposed.
+fiV2Lo4ZAnrzDNyZfA5hY4+Fe+xReiZy
+```
+
+To test the code you can again use the Go tool:
+
+```console
+$ go test ./...
+?       github.com/asankov/secure-messenger     [no test files]
+?       github.com/asankov/secure-messenger/cmd [no test files]
+?       github.com/asankov/secure-messenger/internal/crypto/exchange    [no test files]
+?       github.com/asankov/secure-messenger/internal/secretstore        [no test files]
+ok      github.com/asankov/secure-messenger/internal/crypto     0.750s
+ok      github.com/asankov/secure-messenger/internal/messages   (cached)
+```
