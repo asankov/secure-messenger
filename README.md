@@ -231,3 +231,16 @@ $ go test ./...
 ok      github.com/asankov/secure-messenger/internal/crypto     0.750s
 ok      github.com/asankov/secure-messenger/internal/messages   (cached)
 ```
+
+### Future Improvements
+
+A software can always be improved and new features can always be added.
+
+Possible new features for the Secure Messenger are:
+
+- support more key-exchange algorithms (for example, Public-Private Key crypthography)
+- support for building and running the CLI (and server) as a container
+- support for running it like a server and being able to exchange and listen for messages
+- a simple UI for sending and receiving messages (after the server support is implemented)
+- right now, you can generate encrypted messages via the CLI, but you cannot send them,
+so a command like `secure-messenger send-message --remote-addr=xxx` would be a good UX improvement
