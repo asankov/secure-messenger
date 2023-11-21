@@ -4,11 +4,11 @@ Secure Messaging System is a CLI tool that allows you to send and receive encryp
 
 ## Usage
 
-The `secure-messenger` CLI exposes a few command that allow you to send and receive encrypted messages.
+The `secure-messenger` CLI exposes a few commands that allow you to send and receive encrypted messages.
 
 ### generate-key
 
-In order to send and receive encrypted messages you need a secret key.
+In order to send and receive encrypted messages, you need a secret key.
 
 You can generate one via the `generate-key` command:
 
@@ -16,7 +16,7 @@ You can generate one via the `generate-key` command:
 secure-messenger generate-key
 ```
 
-By default, the key will be save into the OS Keychain.
+By default, the key will be saved into the OS Keychain.
 This is the most secure option, as the Keychain can have native encryption and access control.
 
 All commands support using the key from the keychain, so you never really have to see it and use it manually.
@@ -45,7 +45,7 @@ $ cat key.file
 9ekJni2mWM0BUhnfvg2eq5F7xcAaqPzM
 ```
 
-You can also generate 16-byte, 24-byte and 32-byte long keys.
+You can also generate 16-byte, 24-byte, and 32-byte long keys.
 
 ```console
 $ secure-messenger generate-key --output-to-stdout --key-size=16
@@ -67,22 +67,22 @@ For more info on how to share the key securely, go to [Key Exchange](#key-exchan
 
 ### encrypt
 
-Once you have a key you can use it to generate encrypted messages.
+Once you have a key, you can use it to generate encrypted messages.
 
 ```console
 $ secure-messenger encrypt --sender-id=abc123 --receiver-id=987 --payload="Hello from Planet Earth"
 6Vq4bYb+9yK+wB8P22evR+FTYUZG6zksB7tAzqgnpv66Z2y9f1fJ6UcXZtKPc3Sm9SkwiBg/fXTqLPokvw178WxAqqa3JtRdvUGRr4Ksp/ABXF06IyX48EaIhDAivM4sACYYiditNkLoGyz0b3685yFgMxLc1K7f0Ce13dDuYQ==
 ```
 
-In order to generate a message you need to input 4 arguments:
+In order to generate a message, you need to input 3 arguments:
 
 - `sender-id` - this is the ID of the sender (your ID)
 - `receiver-id` - this is the ID of the receiver
 - `payload` - the payload you want to send
 
-The secret key will automatically be retrieve from the keychain if it exists there.
+The secret key will automatically be retrieved from the keychain if it exists there.
 
-If you want to provide the secret key yourself you can use the `--secret-key` and `--secret-key-file` arguments.
+If you want to provide the secret key yourself, you can use the `--secret-key` and `--secret-key-file` arguments.
 
 The output of the command is the encrypted message, which you can safely share with the other side, without worrying that someone
 might intercept it and read the contents.
@@ -139,11 +139,11 @@ time=2023-11-18T18:28:09.647+02:00 level=INFO msg="Retrieved secret key"
 time=2023-11-18T18:28:09.648+02:00 level=INFO msg="Secret key stored" location=keychain
 ```
 
-This means that the key-exchange was successful and now Bob has the secret key stored in its keychain.
+This means that the key exchange was successful, and now Bob has the secret key stored in its keychain.
 
-These command use the [Diffie-Helmman algorithm](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange) for secure exchanging secret data over an untrusted network.
+This command use the [Diffie-Helmman algorithm](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange) for secure exchanging secret data over an untrusted network.
 
-After this is completed, both Alice and Bob have the secret key and can start exchange messages.
+After this is completed, both Alice and Bob have the secret key and can start exchanging messages.
 
 ## Design decision
 
@@ -152,12 +152,12 @@ After this is completed, both Alice and Bob have the secret key and can start ex
 #### CLI
 
 I have created this program as a [Cobra](https://github.com/spf13/cobra) CLI app.
-I decided to use Cobra, because it is the de-facto standard for building Go CLI apps, I have used it in my work, so am familiar with it, and it has everything I needed for the task.
+I decided to use Cobra because it is the de-facto standard for building Go CLI apps, I have used it in my work, so am familiar with it, and it has everything I need for the task.
 
-Most of the command are simple one-off tasks that run, do something and then exit.
+Most of the commands are simple one-off tasks that run, do something, and then exit.
 
-The only exception is the `exchange-key-server` command that starts a web-server and listens for requests.
-The command does not exit, unless explicitly stopped by the user.
+The only exception is the `exchange-key-server` command that starts a web server and listens for requests.
+The command does not exit unless explicitly stopped by the user.
 
 I used the [cobra-cli generator](https://github.com/spf13/cobra-cli/blob/main/README.md) to generate the boilerplate for the commands.
 All the commands are in the [`cmd`](./cmd) directory.
@@ -167,12 +167,12 @@ All the commands are in the [`cmd`](./cmd) directory.
 The other source folder I have is the [`internal`](./internal/) one.
 
 In Go, the `internal` package is special as it does not allow an external project to import this code.
-I this this, because I don't think that this code should be imported by another project, so I don't want to have it public
+I think this, because I don't think that this code should be imported by another project, so I don't want to have it public
 and to have to deal with API backwards-compatibility guarantees.
 
 The packages inside the `internal` folder are:
 
-- `crypto` - deals with all the crypthography.
+- `crypto` - deals with all the cryptography.
 In `crypto/exchange/listener.go` there is a bit of code that deals with HTTP stuff, which maybe is not the best place for it, but I'll let it roll for now and refactor it later.
 - `messages` - domain model for the messages that are being exchanged
 - `secretstore` - package for the different types of stores used to store the keys
@@ -180,14 +180,14 @@ In `crypto/exchange/listener.go` there is a bit of code that deals with HTTP stu
 Most of the code in `internal` is covered by unit tests.
 
 
-### Crypthography
+### Cryptography
 
-#### Message encryption
+#### Message Encryption
 
-For the message encryption I used [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard).
+For the message encryption, I used [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard).
 This type of encryption is considered secure and used widely in the industry.
 
-For the mode of operation I chose [Galois/Counter Mode (GCM)](https://en.wikipedia.org/wiki/Galois/Counter_Mode).
+For the mode of operation, I chose [Galois/Counter Mode (GCM)](https://en.wikipedia.org/wiki/Galois/Counter_Mode).
 It is supported out-of-the-box by the Go stdlib, it is fast, and it provides both authenticity and confidentiality.
 
 #### Storing the keys
